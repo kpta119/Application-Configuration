@@ -112,8 +112,18 @@ std::ostream& operator<<(std::ostream& os, Configuration const& c)
 {
 	for (KeyValuePair const& pair : c.config)
 	{
-		os << pair.getKey() << " = " << pair.getValue() << std::endl;
+		os << pair.getKey() << " : " << pair.getValue() << std::endl;
 	}
 	return os;
 }
 
+std::istream& operator>>(std::istream& is, Configuration& c)
+{
+	std::string key;
+	std::string value;
+	while (is >> key >> value)
+	{
+		c.write(key, value);
+	}
+	return is;
+}
