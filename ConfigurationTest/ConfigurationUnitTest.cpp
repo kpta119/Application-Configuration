@@ -61,11 +61,10 @@ TEST(WriteKeyValuePairTest, AddingKeyValuePairToConfiguration)
 	std::string value = "v";
 	c.write(key, value);
 	EXPECT_EQ(1, c.getConfig().size());
-	for (KeyValuePair pair : c.getConfig())
-	{
-		EXPECT_EQ("k", pair.getKey());
-		EXPECT_EQ("v", pair.getValue());
-	}
+	KeyValuePair pair = c.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+	
 }
 
 TEST(WriteKeyValuePairTest, AddingKeyValuePairToConfigurationWithAlreadyOneKeyValuePair)
@@ -99,4 +98,110 @@ TEST(WriteKeyValuePairTest, AddingKeyValuePairToConfigurationPairWithTheSameKey)
 	KeyValuePair pair = c.getConfig()[0];
 	EXPECT_EQ("k", pair.getKey());
 	EXPECT_EQ("v2", pair.getValue());
+}
+
+TEST(IndexOperatorTest, GettingValueByKey)
+{
+	Configuration c;
+	std::string key = "k";
+	std::string value = "v";
+	c.write(key, value);
+	EXPECT_EQ("v", c["k"]);
+}
+
+TEST(IndexOperatorTest, GettingValueByKeyWithEmptyConfiguration)
+{
+	Configuration c;
+	EXPECT_EQ("", c["k"]);
+}
+
+TEST(IndexOperatorTest, GettingValueByKeyWithNonExistingKey)
+{
+	Configuration c;
+	std::string key = "k";
+	std::string value = "v";
+	c.write(key, value);
+	EXPECT_EQ("", c["k2"]);
+}
+
+
+TEST(AddAndAssignOperatorTest, AddAndAssignOperatorTwoEmptyConfigurations)
+{
+	Configuration c1;
+	Configuration c2;
+	c1 += c2;
+	EXPECT_EQ(0, c1.getConfig().size());
+}
+
+TEST(AddAndAssignOperatorTest, AddAndAssignOperatorTwoConfigurationsOneIsEmpty)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	c1 += c2;
+	EXPECT_EQ(1, c1.getConfig().size());
+	KeyValuePair pair = c1.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(AddAndAssignOperatorTest, AddAndAssignOperatorTwoConfigurationsOneIsEmpty2)
+{
+	Configuration c1;
+	Configuration c2;
+	std::string key = "k";
+	std::string value = "v";
+	c2.write(key, value);
+	c1 += c2;
+	EXPECT_EQ(1, c1.getConfig().size());
+	KeyValuePair pair = c1.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(AddAndAssignOperatorTest, AddAndAssignOperatorTwoConfigurations)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k2";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	c1 += c2;
+	EXPECT_EQ(2, c1.getConfig().size());
+	KeyValuePair pair1 = c1.getConfig()[0];
+	KeyValuePair pair2 = c1.getConfig()[1];
+	EXPECT_EQ("k", pair1.getKey());
+	EXPECT_EQ("v", pair1.getValue());
+	EXPECT_EQ("k2", pair2.getKey());
+	EXPECT_EQ("v2", pair2.getValue());
+}
+
+TEST(AddAndAssignOperatorTest, AddAndAssignOperatorTwoConfigurationsWithTheSameKey)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	c1 += c2;
+	EXPECT_EQ(1, c1.getConfig().size());
+	KeyValuePair pair = c1.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(AddOperatorTest, AddOperatorTwoEmptyConfigurations)
+{
+	Configuration c1;
+	Configuration c2;
+	Configuration c3 = c1 + c2;
+	EXPECT_EQ(0, c3.getConfig().size());
 }
