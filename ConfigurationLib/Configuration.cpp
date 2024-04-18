@@ -14,6 +14,11 @@ void Configuration::setWriteProtected() noexcept
 	writeProtected = true;
 }
 
+std::vector<KeyValuePair> Configuration::getConfig() const noexcept
+{
+	return config;
+}
+
 bool Configuration::hasKey(std::string const& key) const noexcept
 {
 	for (KeyValuePair const& pair : config)
@@ -65,7 +70,7 @@ Configuration Configuration::operator+(Configuration const& configuration2) cons
 }
 
 
-void Configuration::operator+=(Configuration const& configuration2) noexcept
+void Configuration::operator+=(Configuration const& configuration2)
 {
 	if (writeProtected)
 	{
@@ -88,7 +93,7 @@ Configuration Configuration::operator-(Configuration const& configuration2) cons
 }
 
 
-void Configuration::operator-=(Configuration const& configuration2) noexcept
+void Configuration::operator-=(Configuration const& configuration2)
 {
 	if (writeProtected)
 	{
