@@ -64,7 +64,8 @@ bool Configuration::write(std::string const& key, std::string const& value) noex
 
 Configuration Configuration::operator+(Configuration const& configuration2) const
 {
-	Configuration newConfig = *this;
+	Configuration newConfig;
+	newConfig.config = config;
 	newConfig += configuration2;
 	return newConfig;
 }
@@ -87,7 +88,8 @@ void Configuration::operator+=(Configuration const& configuration2)
 
 Configuration Configuration::operator-(Configuration const& configuration2) const
 {
-	Configuration newConfig = *this;
+	Configuration newConfig;
+	newConfig.config = config;
 	newConfig -= configuration2;
 	return newConfig;
 }
@@ -99,11 +101,15 @@ void Configuration::operator-=(Configuration const& configuration2)
 	{
 		throw std::logic_error("Object is read-only");
 	}
-	for (std::vector<KeyValuePair>::iterator it = config.begin(); it != config.end(); ++it)
+	for (std::vector<KeyValuePair>::iterator it = config.begin(); it != config.end();)
 	{
 		if (configuration2.hasKey((*it).getKey()))
 		{
-			config.erase(it);
+			it = config.erase(it);
+		}
+		else
+		{
+			++it;
 		}
 	}
 }

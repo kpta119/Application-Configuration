@@ -198,10 +198,270 @@ TEST(AddAndAssignOperatorTest, AddAndAssignOperatorTwoConfigurationsWithTheSameK
 	EXPECT_EQ("v", pair.getValue());
 }
 
+TEST(AddAndAssignOperatorTest, AddAndAssignOperatorTwoConfigurationsLeftConfigurationIsReadOnly)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k2";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	c1.setWriteProtected();
+	EXPECT_THROW(c1 += c2; , std::logic_error);
+	
+}
 TEST(AddOperatorTest, AddOperatorTwoEmptyConfigurations)
 {
 	Configuration c1;
 	Configuration c2;
 	Configuration c3 = c1 + c2;
+	EXPECT_EQ(0, c3.getConfig().size());
+}
+
+TEST(AddOperatorTest, AddOperatorTwoConfigurationsOneIsEmpty)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	Configuration c3 = c1 + c2;
+	EXPECT_EQ(1, c3.getConfig().size());
+	KeyValuePair pair = c3.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(AddOperatorTest, AddOperatorTwoConfigurationsOneIsEmpty2)
+{
+	Configuration c1;
+	Configuration c2;
+	std::string key = "k";
+	std::string value = "v";
+	c2.write(key, value);
+	Configuration c3 = c1 + c2;
+	EXPECT_EQ(1, c3.getConfig().size());
+	KeyValuePair pair = c3.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(AddOperatorTest, AddOperatorTwoConfigurations)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k2";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	Configuration c3 = c1 + c2;
+	EXPECT_EQ(2, c3.getConfig().size());
+	KeyValuePair pair1 = c3.getConfig()[0];
+	KeyValuePair pair2 = c3.getConfig()[1];
+	EXPECT_EQ("k", pair1.getKey());
+	EXPECT_EQ("v", pair1.getValue());
+	EXPECT_EQ("k2", pair2.getKey());
+	EXPECT_EQ("v2", pair2.getValue());
+}
+
+TEST(AddOperatorTest, AddOperatorTwoConfigurationsWithTheSameKey)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	Configuration c3 = c1 + c2;
+	EXPECT_EQ(1, c3.getConfig().size());
+	KeyValuePair pair = c3.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(AddOperatorTest, AddOperatorTwoConfigurationsLeftConfigurationIsReadOnly)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k2";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	c1.setWriteProtected();
+	Configuration c3 = c1 + c2;
+	EXPECT_EQ(2, c3.getConfig().size());
+	KeyValuePair pair1 = c3.getConfig()[0];
+	KeyValuePair pair2 = c3.getConfig()[1];
+	EXPECT_EQ("k", pair1.getKey());
+	EXPECT_EQ("v", pair1.getValue());
+	EXPECT_EQ("k2", pair2.getKey());
+	EXPECT_EQ("v2", pair2.getValue());
+}
+
+TEST(SubtractAndAssignOperatorTest, SubtractAndAssignOperatorTwoEmptyConfigurations)
+{
+	Configuration c1;
+	Configuration c2;
+	c1 -= c2;
+	EXPECT_EQ(0, c1.getConfig().size());
+}
+
+TEST(SubtractAndAssignOperatorTest, SubtractAndAssignOperatorTwoConfigurationsOneIsEmpty)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	c1 -= c2;
+	EXPECT_EQ(1, c1.getConfig().size());
+	KeyValuePair pair = c1.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(SubtractAndAssignOperatorTest, SubtractAndAssignOperatorTwoConfigurationsSecondIsEmpty)
+{
+	Configuration c1;
+	Configuration c2;
+	std::string key = "k";
+	std::string value = "v";
+	c2.write(key, value);
+	c1 -= c2;
+	EXPECT_EQ(0, c1.getConfig().size());
+}
+
+TEST(SubtractAndAssignOperatorTest, SubtractAndAssignOperatorTwoConfigurationsWithTheSameKey)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	c1 -= c2;
+	EXPECT_EQ(0, c1.getConfig().size());
+}
+
+TEST(SubtractAndAssignOperatorTest, SubtractAndAssignOperatorTwoConfigurationsWithDifferentKeys)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k2";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	c1 -= c2;
+	EXPECT_EQ(1, c1.getConfig().size());
+	KeyValuePair pair = c1.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(SubtractAndAssignOperatorTest, SubtractAndAssignOperatorTwoConfigurationsLeftConfigurationIsReadOnly)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k2";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	c1.setWriteProtected();
+	EXPECT_THROW(c1 -= c2;, std::logic_error);
+}
+
+TEST(SubtractOperatorTest, SubtractOperatorTwoEmptyConfigurations)
+{
+	Configuration c1;
+	Configuration c2;
+	Configuration c3 = c1 - c2;
+	EXPECT_EQ(0, c3.getConfig().size());
+}
+
+TEST(SubtractOperatorTest, SubtractOperatorTwoConfigurationsOneIsEmpty)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	Configuration c3 = c1 - c2;
+	EXPECT_EQ(1, c3.getConfig().size());
+	KeyValuePair pair = c3.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(SubtractOperatorTest, SubtractOperatorTwoConfigurationsSecondIsEmpty)
+{
+	Configuration c1;
+	Configuration c2;
+	std::string key = "k";
+	std::string value = "v";
+	c2.write(key, value);
+	Configuration c3 = c1 - c2;
+	EXPECT_EQ(0, c3.getConfig().size());
+}
+
+TEST(SubtractOperatorTest, SubtractOperatorTwoConfigurationsWithTheSameKey)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	Configuration c3 = c1 - c2;
+	EXPECT_EQ(0, c3.getConfig().size());
+}
+
+TEST(SubtractOperatorTest, SubtractOperatorTwoConfigurationsRemoveOnePairFromTwoPairsInConfiguration)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	std::string key2 = "k2";
+	std::string value2 = "v2";
+	c1.write(key, value);
+	c1.write(key2, value2);
+	Configuration c2;
+	std::string key3 = "k2";
+	std::string value3 = "v";
+	c2.write(key2, value2);
+	Configuration c3 = c1 - c2;
+	EXPECT_EQ(1, c3.getConfig().size());
+	KeyValuePair pair = c3.getConfig()[0];
+	EXPECT_EQ("k", pair.getKey());
+	EXPECT_EQ("v", pair.getValue());
+}
+
+TEST(SubtractOperatorTest, SubtractOperatorTwoConfigurationsLeftConfigurationIsReadOnly)
+{
+	Configuration c1;
+	std::string key = "k";
+	std::string value = "v";
+	c1.write(key, value);
+	Configuration c2;
+	std::string key2 = "k";
+	std::string value2 = "v2";
+	c2.write(key2, value2);
+	c1.setWriteProtected();
+	Configuration c3 = c1 - c2;
 	EXPECT_EQ(0, c3.getConfig().size());
 }
