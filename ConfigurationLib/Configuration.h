@@ -15,10 +15,13 @@ public:
 	bool hasKey(std::string const& key) const noexcept;
 	bool write(std::string const& key, std::string const& value) noexcept;
 	std::string operator[](std::string const& key) const noexcept;
+
 	Configuration operator+(Configuration const& configuration2) const;
-	void operator+=(Configuration const& configuration2);
+	void operator+=(Configuration const& configuration2) noexcept;
 	Configuration operator-(Configuration const& configuration2) const;
-	void operator-=(Configuration const& configuration2);
-	friend std::ostream& operator<<(std::ostream& os, Configuration const& p);
+	void operator-=(Configuration const& configuration2) noexcept;
+
+	friend std::ostream& operator<<(std::ostream& os, Configuration const& c);
+	friend std::istream& operator>>(std::istream& is, Configuration& c);
 };
 

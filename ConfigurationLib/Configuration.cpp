@@ -55,3 +55,60 @@ bool Configuration::write(std::string const& key, std::string const& value) noex
 	config.push_back(KeyValuePair(key, value));
 	return true;
 }
+
+
+Configuration Configuration::operator+(Configuration const& configuration2) const
+{
+	Configuration newConfig = *this;
+	newConfig += configuration2;
+	return newConfig;
+}
+
+
+void Configuration::operator+=(Configuration const& configuration2) noexcept
+{
+	if (writeProtected)
+	{
+		throw std::logic_error("Object is read-only");
+	}
+	for (KeyValuePair const& pair : configuration2.config)
+	{	if (!hasKey(pair.getKey()))
+		{
+			write(pair.getKey(), pair.getValue());
+		}
+	}
+}
+
+
+Configuration Configuration::operator-(Configuration const& configuration2) const
+{
+	Configuration newConfig = *this;
+	newConfig -= configuration2;
+	return newConfig;
+}
+
+
+void Configuration::operator-=(Configuration const& configuration2) noexcept
+{
+	if (writeProtected)
+	{
+		throw std::logic_error("Object is read-only");
+	}
+	for (std::vector<KeyValuePair>::iterator it = config.begin(); it != config.end(); ++it)
+	{
+		if (configuration2.hasKey((*it).getKey()))
+		{
+			config.erase(it);
+		}
+	}
+}
+
+std::ostream& operator<<(std::ostream& os, Configuration const& c)
+{
+	for (KeyValuePair const& pair : c.config)
+	{
+		os << pair.getKey() << " = " << pair.getValue() << std::endl;
+	}
+	return os;
+}
+
